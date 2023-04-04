@@ -1,0 +1,10 @@
+# Heatmap
+library(pheatmap)
+data<-read.table("a.txt",header = T)
+data<-t(data)
+annotation_col = data.frame(Groups = factor(rep(c("ESCA", "COAD","STAD","READ"), c(126,357,392,130))))
+rownames(annotation_col) =colnames(data)
+ann_colors = list(Groups = c(ESCA="#F34800", STAD="#1B9E77",COAD = "#00447E", READ = "orange"))
+tiff(filename = "heatmap.tif",width = 15,height = 15,units ="cm",compression="lzw",bg="white",res=300)
+pheatmap(data,scale = "column",clustering_distance_cols="correlation", color = colorRampPalette(c("navy", "white", "firebrick3"))(50),show_rownames=F,show_colnames=F,annotation_col = annotation_col,annotation_colors = ann_colors)
+dev.off()

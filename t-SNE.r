@@ -1,0 +1,16 @@
+# t-SNE
+library(readxl)
+library(Rtsne)
+library(ggplot2)
+library(dplyr)
+data<-read_excel('data_of_proteomics.xlsx',sheet=2)
+data<-as.data.frame(data)
+tsne_out<-Rtsne(data[-1])
+pdat <- data.frame(tsne_out$Y,data$Cancer_Type)
+colnames(pdat)<-c('Y1','Y2','group')
+pdat %>% group_by(group) %>% summarise(mean_y1=mean(Y1),mean_y2=mean(Y2)) -> pdat_mean
+pdat_mean <- as.data.frame(pdat_mean)
+p<-ggplot(pdat)+geom_point(aes(Y1,Y2,colour=factor(group)),alpha=0.8)+geom_text(data=pdat_mean,aes(x=mean_y1,y=mean_y2,label=group),size=3)+theme(legend.position = 'none',panel.background = element_rect(colour = '#eeeeee'))
+tiff(filename = "aa.tif",width = 15,height = 15,units ="cm",compression="lzw",bg="white",res=300)
+print(p)
+dev.off()
